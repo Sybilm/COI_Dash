@@ -11,13 +11,13 @@ import pandas as pd
 app = dash.Dash()
 
 #reading in the Data
-df0 = pd.read_csv(r'D:\\Users\\SMendonc\\Desktop\\py_dash\\alldata.csv') 
+df0 = pd.read_csv(r'D:\py_dash\COI\COI_Dash\alldata.csv') 
 #delete the row that contains the US number - skews scatter plot
 df0=df0[df0['statecode'] != 'US' ]
 
 
 #latitude -longitude codes
-df_cd = pd.read_csv(r'D:\\Users\\SMendonc\\Desktop\\py_dash\\latlong_codes.csv') 
+df_cd = pd.read_csv(r'D:\py_dash\COI\COI_Dash\latlong_codes.csv') 
 df_cd=df_cd[df_cd['statecode'] != 'PR' ]
 df = pd.merge(df0, df_cd, how='outer', on=['statecode'])
 
@@ -69,19 +69,24 @@ app.layout = html.Div([
                                 ),
                                 dcc.Graph(
                                     id="county-choropleth",
+									
 									#hoverData={'points': [{'customdata': 'AK'}]},
                                     figure=dict(
                                         data=[
-                                            dict(
+                                            dict(type="scattermapbox",
                                                 lat=df["latitude"],
                                                 lon=df["longitude"],
+												mode='markers',
                                                 text=df["statecode"],
-                                                type="scattermapbox",
+												customdata =df['statecode'],
+                                                #clickData={'points': [{'customdata': 'AK'}]},
+												
                                             )
                                         ],
                                         layout=dict(
 											autosize = True,
-											hovermode = "closest",
+											clickmode = 'event+select',
+											#hovermode = "closest",
 											margin = dict(l = 0, r = 0, t = 0, b = 0),
                                             mapbox=dict(
                                                 layers=[],
@@ -95,61 +100,11 @@ app.layout = html.Div([
 												style='light',
 
                                             ),
-                                            autosize=True,
+                                           # autosize=True,
                                         ),
                                     ),
                                 ),
                             ], style={'width': '100%', 'display': 'inline-block', 'padding': '0 20'}),
-     	#us map2
-	html.Div(
-	 id="heatmap-container2",
-	 children=[ dcc.Graph(
-                                    id="county-choropleth_test",
-									hoverData={'points': [{'customdata': 'AK'}]},
-                                    figure=dict(
-                                        data=[
-                                            dict(
-                                                lat=df["latitude"],
-                                                lon=df["longitude"],
-                                                text=df["statecode"],
-                                                type="scattergeo",
-										        locationmode = 'USA-states',
-												mode = 'markers',
-												marker = dict(
-													size = 8,
-													opacity = 0.8,
-													reversescale = True,
-													autocolorscale = False,
-													symbol = 'square',
-													line = dict(
-														width=1,
-														color='rgba(102, 102, 102)'
-													),
-												colorscale = scl,
-												cmin = 0,
-												color = df['value'],
-												cmax = df['value'].max(),
-												colorbar=dict(
-													title="Incoming flightsFebruary 2011"
-												)	
-													
-													
-                                            ))
-                                        ],
-                                        layout=dict(
-											colorbar = True,
-                                            geo=dict(
-													scope='usa',
-													projection=dict( type='albers usa' ),
-													showland = True,
-													landcolor = "rgb(250, 250, 250)",
-													subunitcolor = "rgb(217, 217, 217)",
-													countrycolor = "rgb(217, 217, 217)",
-													countrywidth = 0.5,
-													subunitwidth = 0.5
-													),
-											)
-											))]),
 
 	
 	                   
@@ -350,16 +305,22 @@ def create_time_series(dff,  title):
 @app.callback(
     dash.dependencies.Output('x-time-series', 'figure'),
     [
-	dash.dependencies.Input('county-choropleth_test', 'clickData'),
+	dash.dependencies.Input('county-choropleth', 'clickData'),
 	#dash.dependencies.Input('crossfilter-indicator-scatter', 'hoverData'),
      dash.dependencies.Input('crossfilter-xaxis-column', 'value')])
 def update_x_timeseries(selection, xaxis_column_name):
-	country_name = hoverData['points'][0]['customdata']
+	if selection is None:
+		return {}
+	else:
+		country_name = selection['points'][0]['text']
+	#country_name = clickData['points'][0]['customdata']
+	
+	#country_name = hoverData['points'][0]['customdata']
 	 #AAA       x_data = np.linspace(0,500,500)
      #AAAA   y_data = np.random.rand(500)
-	dff = df[df['statecode'] == country_name]
-	dff = dff[dff['variable'] == xaxis_column_name]
-	title = '<b>{}</b><br>{}'.format(country_name, xaxis_column_name)
+		dff = df[df['statecode'] == country_name]
+		dff = dff[dff['variable'] == xaxis_column_name]
+		title = '<b>{}</b><br>{}'.format(country_name, xaxis_column_name)
 	return create_time_series(dff, title)
 #	return create_time_series(dff, xaxis_column_name)
     
@@ -369,13 +330,17 @@ def update_x_timeseries(selection, xaxis_column_name):
 @app.callback(
     dash.dependencies.Output('y-time-series', 'figure'),
     [
-	dash.dependencies.Input('county-choropleth_test', 'hoverData'),
+	dash.dependencies.Input('county-choropleth', 'clickData'),
 	#dash.dependencies.Input('crossfilter-indicator-scatter', 'hoverData'),
      dash.dependencies.Input('crossfilter-yaxis-column', 'value')])
-def update_y_timeseries(hoverData, yaxis_column_name):
-	country_name = hoverData['points'][0]['customdata']
-	dff = df[df['statecode'] == hoverData['points'][0]['customdata']]
-	dff = dff[dff['variable'] == yaxis_column_name]
+def update_y_timeseries(selection, yaxis_column_name):
+	if selection is None:
+		return {}
+	else:
+		#country_name = clickData['points'][0]['customdata']
+		country_name = selection['points'][0]['text']
+		dff = df[df['statecode'] == selection['points'][0]['customdata']]
+		dff = dff[dff['variable'] == yaxis_column_name]
 	return create_time_series(dff, yaxis_column_name)
 #	title = '<b>{}</b><br>{}'.format(country_name, yaxis_column_name)
 #	return create_time_series(dff, title)
