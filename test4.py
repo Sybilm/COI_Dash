@@ -152,19 +152,62 @@ app.layout = html.Div([
 		filter_action="native",
         sort_action="native",
         sort_mode="multi",
-#       row_selectable="multi",
+        row_selectable="multi",
 #		row_deletable=True,
-        selected_columns=[],
+        selected_rows=[],
+#		selected_row_indices=[],
         page_action="native",
         page_current= 0,
         page_size= 10,
 		style_table={ 'maxHeight': '300', 'overflowX': 'scroll'},
 		),
 		html.Div(id='datatable-row-ids-container')
-])
+]),
+#	html.A(
+#        'Download Data',
+#        id='download-link',
+#        download="rawdata.csv",
+#        href="",
+#        target="_blank"
+#    ),
+	html.Button('Get data', id='button'),
 		
 ])
+@app.callback(dash.dependencies.Output('button', 'children'),
+             [
+#			 dash.dependencies.Input('datatable-row-ids', 'derived_virtual_row_ids'),
+             dash.dependencies.Input('datatable-row-ids', 'selected_row_ids'),
+			 dash.dependencies.Input('datatable-row-ids', 'selected_row_indices'),
+#              dash.dependencies.Input('datatable-row-ids', 'active_cell'),
+			  dash.dependencies.Input('button', 'n_clicks')]
+              )
 
+#def save_current_table(savebutton, tablerows, selected_row_indices):
+#def save_current_table(row_ids, selected_row_ids, active_cell, button):
+def save_current_table(selected_row_ids, selected_row_indices, button):
+    #table_df = pd.DataFrame(tablerows) #convert current rows into df
+	selected_rows=[rows[i] for i in selected_row_indices]
+	#selected_id_set = set(selected_row_ids or [])
+#	if row_ids is None:
+#		dff = df_orig
+		# pandas Series works enough like a list for this to be OK
+#		row_ids = df_orig['id']
+#	else:
+#		dff = df_orig.loc[row_ids]
+#	active_row_id = active_cell['row_id'] if active_cell else None
+	if button:
+		selected_rows.to_csv("selected_Row.csv")
+		#selected_id_set.to_csv("selected_Row.csv")
+		return "Current table saved."
+    #if selected_row_indices:
+    #    table_df = table_df.loc[selected_row_indices] #filter according to selected rows
+
+    #if savebutton:
+     #   table_df.to_csv(filename)
+     #   return "Current table saved."
+		
+		
+		
 def create_time_series(dff,  title):	    
     return {
         'data': [go.Scatter(

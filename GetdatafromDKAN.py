@@ -83,6 +83,9 @@ d_17=a['2017']
 
 d_all0 =d_15.append(d_16)
 d_all=d_all0.append(d_17)
+#export all data
+d_all.to_csv('D:\py_dash\COI\COI_Dash\Orig_data.csv')
+
 d_all['year_end'].unique()
 #text for map
 #d_all['text'] = d_all['all_children'] + d_all['below_pov'] + d_all['children_imm_parents']
@@ -92,3 +95,4 @@ d_all['year_end'].unique()
 
 d_all_T = pd.melt(d_all, id_vars=['statecode', 'year_end'], value_vars=['all_children', 'imm_children', 'nat_children', 'children_imm_parents', 'children_native_parents', 'children_unknown_parents', 'second_gener', 'fb_children_imm_parents', 'nb_children_nb_parents', 'noncitizen_prt', 'citizen_prt', 'citizen_children_noncit_parents', 'noncit_children_noncit_parents', 'cit_children_cit_parents', 'children_from_europe', 'children_from_mexico', 'children_from_central_america', 'children_from_south_america', 'children_from_southeast_asia', 'children_from_east_asia', 'children_from_middle_east', 'children_prts_from_africa', 'hispanic', 'black', 'asian', 'white', 'natamer', 'othmult', 'age_0_to_3', 'age_4_to_5', 'age_6_to_8', 'age_9_to_12', 'age_13_to_15', 'age_16_to_17', 'below_pov', 'above_pov','low_income',	'high_income', 'children_liwf_imm_prts', 'children_liwf_native_prts', 'nofamdis', 'hasfamdis', 'novehic', 'hasvehic', 'noprtvets', 'hasprtvets', 	'not_hcb', 'hcb_any'])
 
+df.to_csv('example.csv')
