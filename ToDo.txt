@@ -1,0 +1,7 @@
+MSA
+compare 2 states
+plotting multiple vars
+related groupings- age versus XXX
+data quality - checks
+urban stylesheet/classes - design guide
+OR style sheet from R shiny package

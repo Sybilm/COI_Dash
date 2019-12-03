@@ -81,7 +81,8 @@ app.layout = html.Div([
                                         ],
                                         layout=dict(
 											autosize = True,
-											hovermode = "closest",
+											clickmode = 'event+select',
+											#hovermode = "closest",
 											margin = dict(l = 0, r = 0, t = 0, b = 0),
                                             mapbox=dict(
                                                 layers=[],
@@ -138,6 +139,7 @@ app.layout = html.Div([
                                         ],
                                         layout=dict(
 											colorbar = True,
+											
                                             geo=dict(
 													scope='usa',
 													projection=dict( type='albers usa' ),
