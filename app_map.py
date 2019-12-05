@@ -8,10 +8,12 @@ import pandas as pd
 import numpy as np
 
 #read in data from S3. 
+####
 #CHANGE IMPORT ACCORDINGLY!
+# The readin python code needs to be in the same directory as app_map.py
+####
 import readindata_18Nov2019
 df_orig, df0=readindata_18Nov2019.coi_long_format_from_S3([2014, 2015, 2016, 2017])
-
 
 
 #color scale for the choropleth
@@ -37,8 +39,12 @@ df0=df0[df0['share'] == 0 ]
 df0=df0[df0['value'] != -97]
 df0=df0[df0['value'] != -98]
 
+##CHANGE PATH!!!
 #latitude -longitude codes
 df_cd = pd.read_csv(r'D:\py_dash\COI\COI_Dash\latlong_codes.csv') 
+
+
+
 #COI data does not exist for statecode=PR
 df_cd=df_cd[df_cd['statecode'] != 'PR' ]
 #merging in the FIPS code to the COI data
@@ -57,7 +63,6 @@ available_orig = available_orig[available_orig != "Population total"]
 
 
 colorsIdx = {'2015': 'rgb(215,48,39)', '2016': 'rgb(215,148,39)', '2017': 'rgb(0,176,240)', 'text': '#7FDBFF'}
-
 
 #Dash apps are composed of two parts. 
 #The first part is the "layout" of the app and it describes what the application looks like. 
@@ -237,6 +242,8 @@ def update_figure(value, varchoice, stvalue):
     #drop missing values
 	df_orig0=df_orig[df_orig['year_end'] == value]							#subsetting for year selected on the slider.
 	df_orig0=df_orig0[df_orig0["share"] ==1]								#share =1 implies percent
+	df_orig0=df_orig0[df_orig0[varchoice] != -98]
+	df_orig0=df_orig0[df_orig0[varchoice] != -97]
 	df_orig0=df_orig0[df_orig0["Statistics_Label"] != "Population total"]	# population total is not relevant to the choropleth
 	df_orig1=df_orig0[df_orig0["Statistics_Label"] == stvalue]				#subsetting for statistics selected using the dropdown
 	
