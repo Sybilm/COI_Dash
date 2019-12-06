@@ -16,6 +16,27 @@ import readindata_18Nov2019
 df_orig, df0=readindata_18Nov2019.coi_long_format_from_S3([2014, 2015, 2016, 2017])
 
 
+
+#changing column names to column labels for df_orig
+#df0 contains variable names and labels. Will change df_orig column names using these 2 vars from df0
+df01=df0[["variable", "variable_label"]].drop_duplicates()
+d = df01.set_index('variable').to_dict()
+#adding key value pairs for the ones not present in d
+d["variable_label"].update({'data_sort_id':'data_sort_id', 'metrocode':'metrocode', 'statecode':'statecode', 'Statistics_Label':'Statistics_Label', 'StatID':'StatID', 'year_start':'year_start',
+  'year_end':'year_end',     'share':'share',     'number':'number', 'CategoryID':'CategoryID',
+'CategoryName':'CategoryName',
+'CategorySortOrder':'CategorySortOrder',
+'CategorySortOrderName':'CategorySortOrderName',
+'prtUS5pyrs':'prtUS5pyrs',
+'prtUSLT5yrs':'prtUSLT5yrs',
+'Statistics_Label_short':'Statistics_Label_short'
+})
+#renaming column names with column labels 
+df_orig.columns = df_orig.columns.to_series().map(d['variable_label'])    
+
+
+
+
 #color scale for the choropleth
 scl = [
     [0.0, 'rgb(207,232,243)'],
@@ -44,7 +65,6 @@ df0=df0[df0['value'] != -98]
 df_cd = pd.read_csv(r'D:\py_dash\COI\COI_Dash\latlong_codes.csv') 
 
 
-
 #COI data does not exist for statecode=PR
 df_cd=df_cd[df_cd['statecode'] != 'PR' ]
 #merging in the FIPS code to the COI data
@@ -57,7 +77,7 @@ available_indicators = df['variable_label'].unique()
 #statistics
 stat_indicators=df['Statistics_Label'].unique()
 #Variable array list for the Choropleth. Drop off Population total
-available_orig = df['variable'].unique()
+available_orig = df['variable_label'].unique()
 available_orig = available_orig[available_orig != "Population total"]
 
 
@@ -117,7 +137,7 @@ app.layout = html.Div([
 				html.Label([ "Select variable for Choropleth",
 							dcc.Dropdown(
 								id='var_choice'  , 
-								value='all_children'  , 
+								value='All children'  , 
 								options=[{'label': i, 'value': i} for i in available_orig],
 								),
 							]),														

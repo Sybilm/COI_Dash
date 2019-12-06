@@ -92,13 +92,28 @@ def coi_long_format_from_S3(years):
     
     return d_all, d_all_T_merged
     
-#b, a=coi_long_format_from_S3([2014, 2015, 2016, 2017])
+#df_orig, df0=coi_long_format_from_S3([2014, 2015, 2016, 2017])
 
+
+
+#df01=df0[["variable", "variable_label"]].drop_duplicates()
+
+#d = df01.set_index('variable').to_dict()
+
+#d["variable_label"].update({'data_sort_id':'data_sort_id', 'metrocode':'metrocode', 'statecode':'statecode', 'Statistics_Label':'Statistics_Label', 'StatID':'StatID', 'year_start':'year_start',
+#  'year_end':'year_end',     'share':'share',     'number':'number', 'CategoryID':'CategoryID',
+#'CategoryName':'CategoryName',
+#'CategorySortOrder':'CategorySortOrder',
+#'CategorySortOrderName':'CategorySortOrderName',
+#'prtUS5pyrs':'prtUS5pyrs',
+#'prtUSLT5yrs':'prtUSLT5yrs',
+#'Statistics_Label_short':'Statistics_Label_short'
+#})
+ 
+#df_orig.columns = df_orig.columns.to_series().map(d['variable_label'])    
+#Example: https://stackoverflow.com/questions/36531675/rename-columns-in-pandas-based-on-dictionary
 
 
 #a.to_csv("D:/py_dash/COI/COI_Dash/alldata2.csv")
 #b.to_csv("D:/py_dash/COI/COI_Dash/Orig_data2.csv")
-
-
-
 #a_test=a[a['variable'] =='age_0_to_3']
